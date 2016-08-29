@@ -1,0 +1,52 @@
+---
+ - name: copy apr-1.5.2.tar.gz
+   copy: src=/opt/LoudCloud/apr-1.5.2.tar.gz dest=/opt/apache
+ - unarchive: src=/opt/apache/apr-1.5.2.tar.gz dest=/opt/apache remote_src=yes  copy=no
+
+ - name: copy apr-util-1.5.4.tar.gz
+   copy: src=/opt/LoudCloud/apr-util-1.5.4.tar.gz dest=/opt/apache
+ - unarchive: src=/opt/apache/apr-util-1.5.4.tar.gz dest=/opt/apache remote_src=yes  copy=no
+
+ - name: copy pcre
+   copy: src=/opt/LoudCloud/pcre-8.39.tar.bz2 dest=/opt/apache
+ - unarchive: src=/opt/apache/pcre-8.39.tar.bz2 dest=/opt/apache remote_src=yes  copy=no
+
+ - name: copy apache
+   copy: src=/opt/LoudCloud/httpd-2.4.20.tar dest=/opt/apache
+ - unarchive: src=/opt/apache/httpd-2.4.20.tar dest=/opt/apache remote_src=yes  copy=no
+
+ - name: install required packages
+   yum: pkg={{ item }} state=present
+   with_items:
+   - gcc
+   - gcc-c++
+   - vim
+   - wget
+   - openssl-devel
+ - name: Install APR
+   command: "{{ item }} chdir=/opt/apache/apr-1.5.2/"
+   with_items:
+   - ./configure --prefix=/usr/local/apache2 --datadir=/usr/local/apache2/var --enable-shared
+   - /usr/bin/make
+   - /usr/bin/make install
+ 
+ - name: Install APR-util
+   command: "{{ item }} chdir=/opt/apache/apr-util-1.5.4/"
+   with_items:
+   - ./configure --prefix=/usr/local/apache2 --infodir=/usr/local/apache2/info --mandir=/usr/local/apache2/man --sysconfdir=/usr/local/apache2/conf --datadir=/usr/local/apache2/var --with-apr=/usr/local/apache2
+   - /usr/bin/make
+   - /usr/bin/make install
+
+ - name: Install PCRE
+   command: "{{ item }} chdir=/opt/apache/pcre-8.39"
+   with_items:
+   - ./configure --prefix=/usr/local/apache2
+   - /usr/bin/make
+   - /usr/bin/make install
+
+ - name: Install Apache
+   command: "{{ item }} chdir=/opt/apache/httpd-2.4.20"
+   with_items:
+   - ./configure --prefix=/usr/local/apache2 --enable-mpms-shared=all --enable-so --enable-ssl=shared --with-mpm=event --enable-static-support --enable-mods-shared=reallyall --enable-proxy=shared --enable-proxy-ajp=shared --enable-proxy-balancer=shared --enable-proxy-connect=shared --enable-proxy-ftp=shared --enable-proxy-http=shared --with-apr=/usr/local/apache2 --with-apr-util=/usr/local/apache2 --with-pcre=/usr/local/apache2
+   - /usr/bin/make
+   - /usr/bin/make install

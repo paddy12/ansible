@@ -1,0 +1,13 @@
+# Here are variables related to the Tomcat installation
+
+http_port: 8081
+https_port: 8443
+tomcat: /opt/tomcat/apache-tomcat-8.0.33 
+directory: /opt
+tomcat_name: apache-tomcat-8.0.33.tar.gz 
+dest: /opt/tomcat
+src: /root/Downloads/apache-tomcat-8.0.33.tar.gz  
+# This will configure a default manager-gui user:
+
+admin_username: admin
+admin_password: admin

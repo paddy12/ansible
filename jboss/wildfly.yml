@@ -1,0 +1,13 @@
+--- 
+- hosts: 192.168.1.63
+  vars_prompt:
+    - prompt: "jboss_mode"
+      name: jboss_mode
+      default: standalone
+      name: jboss_mode
+      private: no
+      when: jboss_mode is undefined
+ # vars:
+ #    from: "test"
+  roles:
+   - wildfly-standalone

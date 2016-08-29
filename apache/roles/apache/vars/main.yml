@@ -1,0 +1,17 @@
+# Here are variables related to the Tomcat installation
+
+wildfy_home: /opt/wildfly/wildfly-10.0.0.Final 
+directory: /opt
+src: /etc/ansible/jboss/roles/wildfly-standalone/templates/wildfly-10.0.0.Final.zip
+wildfly_name: wildfly-10.0.0.Final.zip 
+dest: /opt/wildfly
+JBOSS_CONF: /etc/init.d/wildfly.conf
+JBOSS_HOME: /opt/wildfly/wildfly-10.0.0.Final
+JBOSS_PIDFILE: /opt/wildfly/wildfly-10.0.0.Final/JBoss.pid
+JBOSS_CONSOLE_LOG: /opt/wildfly/wildfly-10.0.0.Final/console.log
+#jboss_mode: standalone
+JBOSS_USER: jboss
+download_url: http://download.oracle.com/otn-pub/java/jdk/8u102-b14/jdk-8u102-linux-x64.tar.gz
+
+# This will configure a default manager-gui user:
+

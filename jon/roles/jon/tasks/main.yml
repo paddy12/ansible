@@ -1,0 +1,49 @@
+---
+ - name: Install postgres
+   yum: pkg={{ item }} state=present
+   with_items:
+   - postgresql-server
+   - python-psycopg2
+ - name: Initdb postgres
+   command: /etc/init.d/postgresql initdb
+
+ - name: copy the postgres.conf file 
+   template: src=pg_hba.conf dest=/var/lib/pgsql/data/pg_hba.conf
+
+ - name: start postgres 
+   service: name=postgresql state=started
+
+
+
+ - name: Postgres user
+   postgresql_user: name=rhqadmin password=rhqadmin 
+   become: yes
+   become_user: postgres
+
+
+ - name: Copy the RHQ 
+   copy: src=/opt/JON/jon-server-3.3.0.GA.zip dest=/opt
+ - unarchive: src=/opt/jon-server-3.3.0.GA.zip dest=/opt/jon remote_src=yes  copy=no
+
+
+ - name: Create DB 
+   postgresql_db: name=rhq owner=rhqadmin 
+   become: yes
+   become_user: postgres
+
+ - name: rhq-env file
+   template: src=rhq-server-env.sh dest=/opt/jon/jon-server-3.3.0.GA/bin/rhq-server-env.sh
+
+
+
+ - name: rhq properties file
+   template: src=rhq-server.properties dest=/opt/jon/jon-server-3.3.0.GA/bin/rhq-server.properties 
+
+
+ - name: set JAVA_HOME
+   shell: /opt/jon/jon-server-3.3.0.GA/bin/rhq-server-env.sh
+
+ - name: Install RHQ
+   command: "{{ item }} chdir=/opt/jon/jon-server-3.3.0.GA/bin"
+   with_items:
+   - ./rhqctl install

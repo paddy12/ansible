@@ -1,0 +1,5 @@
+---
+ - name: restart wildfly
+   service: name=wildfly-init-redhat.sh state=restarted
+ - name: restart iptables
+   service: name=iptables state=restarted

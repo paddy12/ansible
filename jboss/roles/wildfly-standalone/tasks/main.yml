@@ -1,0 +1,45 @@
+---
+ - name: add group "jboss"
+   group: name=jboss
+
+ - name: add user "jboss"
+   user: name=jboss group=jboss home=/usr/home/jboss createhome=no
+
+ - name: Create wildfly directory
+   file: path={{ directory }}/wildfly owner=root group=root mode=0755 state=directory
+ 
+ - name: Install Wildfly-10
+   copy: src={{ src }}  dest={{ dest }}
+
+ - unarchive: src={{ dest }}/{{ wildfly_name }} dest={{ dest }} remote_src=yes setype=zip copy=no
+
+ - name: Change ownership of Tomcat installation
+   file: path={{ directory }} owner=jboss group=jboss state=directory recurse=yes
+
+# - name: Download
+#   get_url: url="http://download.oracle.com/otn-pub/java/jdk/8u101-b13/jdk-8u101-linux-x64.rpm" headers="Cookie:oraclelicense=accept-securebackup-cookie" dest=/opt/jdk validate_certs=no
+# - name: Install java
+#   yum:
+#    name: /opt/jdk/jdk-8u101-linux-x64.rpm
+#    state: present
+# - name: Make Java available for system
+#   command: 'update-alternatives --install "/usr/bin/java" "java" "/usr/java/jdk1.8.0_101/bin/java" 1'
+# - name: Symlink install directory
+
+
+
+# - name: Configure Tomcat users
+#   template: src=tomcat-users.xml dest=/usr/share/tomcat/conf/
+#   notify: restart tomcat
+
+ - name:  Wildlfy conf file
+#   template: src=/etc/ansible/roles/tomcat-standalone/files/tomcat_start.sh dest=/etc/init.d/tomcat_start mode=0755
+   template: src=wildfly.conf dest=/etc/init.d/wildfly.conf 
+ 
+ - name: Wildfly initd script
+   template: src=wildfly-init-redhat.sh dest=/etc/init.d/wildfly-init-redhat.sh mode=0755
+#   copy: src=tomcat_start.sh dest=/etc/init.d/tomcat_start mode=0755
+
+ - name: Start JBoss
+   service: name=wildfly-init-redhat.sh pattern=/usr/bin/java enabled=yes state=restarted
+
